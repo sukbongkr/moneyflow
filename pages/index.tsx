@@ -28,31 +28,38 @@ export default function Home() {
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
   }
   const onValid = (data : UploadForm) => {
-    if(!data.debt) data.debt=0
-    if(!data.price) data.price=0
-    if(!data.income) data.income=0
-    if(!data.outcome) data.outcome=0
-    data.id = guid()
-    addAsset(data)
+    const id = guid()
+    const debt = data.debt ? parseInt(data.debt.toString()) : 0
+    const price = data.price ? parseInt(data.price.toString()) : 0
+    const income = data.income ? parseInt(data.income.toString()) : 0
+    const outcome = data.outcome ? parseInt(data.outcome.toString()) : 0 
+    
+    addAsset(
+      {
+        id : id,
+        debt,
+        price,
+        income,
+        outcome,
+        title : data.title
+      }
+    )
     reset()
   }
 
   const totalCashFlow = useMemo(()=>{
-    if(assets){
-      const totalIncome = assets?.map(d=>d.income).reduce((p,c)=>p+c, 0)
-      const totalOutcome = assets?.map(d=>d.outcome).reduce((p,c)=>p+c, 0)
-      
-      return totalIncome - totalOutcome
-    }
+    const totalIncome = assets.map(d=>d.income).reduce((p,c)=>p+c, 0)
+    const totalOutcome = assets.map(d=>d.outcome).reduce((p,c)=>p+c, 0)
+    
+    return parseInt(totalIncome.toString()) - parseInt(totalOutcome.toString())
   }, [assets])
 
+  
   const totalAssetPrice = useMemo(()=>{
-    if(assets){
-      const totalPrice = assets.map(d=>d.price).reduce((p,c)=>p+c, 0)
-      const totalDebt = assets.map(d=>d.debt).reduce((p,c)=>p+c, 0)
-      
-      return totalPrice - totalDebt
-    }
+    const totalPrice = assets.map(d=>d.price).reduce((p,c)=>p+c, 0)
+    const totalDebt = assets.map(d=>d.debt).reduce((p,c)=>p+c, 0)
+    
+    return parseInt(totalPrice.toString()) - parseInt(totalDebt.toString())
   }, [assets])
 
   return (
